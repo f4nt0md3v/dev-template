@@ -1,0 +1,119 @@
+apply plugin: 'com.android.application'
+apply plugin: 'org.greenrobot.greendao'
+
+android {
+    compileSdkVersion versions.compileSdkVersion
+    buildToolsVersion versions.buildToolsVersion
+
+    defaultConfig {
+        applicationId "cn.huangjiawen.dev_template"
+        minSdkVersion versions.minSdkVersion
+        targetSdkVersion versions.targetSdkVersion
+        versionCode versions.appVersionCode // Increase when upgrades
+        versionName versions.appVersionName // Comes from gradle.properties
+
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+
+        // Speed up the build by only fetching the resources for supported. See https://developer.android.com/studio/build/shrink-code.html
+        resConfigs "en"
+
+        jackOptions {
+            enabled true
+        }
+    }
+
+    sourceSets.main.jni.srcDirs = [] //disable automatic ndk-build call
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/rxjava.properties'
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            useProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        release {
+            shrinkResources true
+            minifyEnabled true
+            useProguard true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    dexOptions {
+        preDexLibraries true
+        javaMaxHeapSize dexMemoryAllocation
+        dexInProcess true
+    }
+
+    greendao {
+        schemaVersion 1 // Increase when table changes
+        daoPackage 'cn.huangjiawen.dev_template.storage.db'
+        targetGenDir 'src/main/java'
+    }
+}
+//
+//repositories {
+//    maven { url 'https://jitpack.io' }
+//}
+
+dependencies {
+    // Libraries under app/libs/ folder
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile project(':stateLayout')
+    // Support libraries
+    compile "com.android.support:support-annotations:$versions.supportLibrariesVersion"
+    compile "com.android.support:support-v4:$versions.supportLibrariesVersion"
+    compile "com.android.support:recyclerview-v7:$versions.supportLibrariesVersion"
+    compile "com.android.support:appcompat-v7:$versions.supportLibrariesVersion"
+    compile "com.android.support:design:$versions.supportLibrariesVersion"
+    // ButterKnife
+    compile "com.jakewharton:butterknife:$versions.butterknifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$versions.butterknifeVersion"
+    // Glide
+    compile "com.github.bumptech.glide:glide:$versions.glideVersion"
+    // GreenDao
+    compile "org.greenrobot:greendao:$versions.greenDaoVersion"
+    compile "org.greenrobot:eventbus:$versions.greenEventbusVersion"
+    // MultiTypeAdapter
+    compile("me.drakeet.multitype:multitype:$versions.multiTypeVersion", {
+        exclude group: 'com.android.support'
+    })
+    // Retrofit2
+    compile "com.squareup.retrofit2:retrofit:$versions.retrofitVersion"
+    compile "com.squareup.retrofit2:converter-gson:$versions.retrofitVersion"
+    compile "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofitAdapter4RxJava2"
+    compile "com.squareup.okhttp3:logging-interceptor:$versions.loggingInterceptorVersion"
+    // Rxjava2 Rxbinding2
+    compile "io.reactivex.rxjava2:rxandroid:$versions.rxAndroidVersion"
+    compile "io.reactivex.rxjava2:rxjava:$versions.rxJavaVersion"
+    compile "com.jakewharton.rxbinding2:rxbinding:$versions.rxBindingVersion"
+    compile "com.jakewharton.rxbinding2:rxbinding-support-v4:$versions.rxBindingVersion"
+    compile "com.jakewharton.rxbinding2:rxbinding-recyclerview-v7:$versions.rxBindingVersion"
+    // Test
+    debugCompile("com.facebook.stetho:stetho-okhttp3:$versions.stethoOkHttpVersion", {
+        exclude module: 'jsr305'
+    })
+    androidTestCompile("com.android.support.test.espresso:espresso-core:$versions.espressoVersion", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    testCompile "junit:junit:$versions.junitVersion"
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+}

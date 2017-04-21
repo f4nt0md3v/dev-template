@@ -1,0 +1,23 @@
+apply from: 'versioning.gradle'
+
+buildscript {
+    repositories {
+        jcenter()
+//        maven { url 'https://jitpack.io' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.1'
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+//        maven { url 'https://jitpack.io' }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
